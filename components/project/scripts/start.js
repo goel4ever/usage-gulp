@@ -5,7 +5,7 @@
 'use strict';
 
 // Calling Sample One function
-sampleOne();
+sampleOne(1);
 
 // Calling Sample Two function
 sampleTwo();
