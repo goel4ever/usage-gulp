@@ -8,6 +8,7 @@
 var gulp = require('gulp'),
     gutil = require('gulp-util'),
     concat = require('gulp-concat'),
+    jshint = require('gulp-jshint'),
     browserify = require('gulp-browserify'),
     compass = require('gulp-compass');
 
@@ -24,6 +25,13 @@ var sassDestination = 'builds/development/css';
 gulp.task('default', function() {
   gutil.log('Learning Gulp')
     .on('error', gutil.log);
+});
+
+gulp.task('jshint', function() {
+  gulp.src(jsSources)
+    .pipe(jshint()
+      .on('error', gutil.log))
+    .pipe(gulp.dest(jsDestination));
 });
 
 gulp.task('js', function() {
