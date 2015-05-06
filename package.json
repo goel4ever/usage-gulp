@@ -1,0 +1,17 @@
+{
+  "name": "usage-gulp",
+  "version": "0.0.1",
+  "description": "Project hosting sample code for Gulp for future references",
+  "author": "Anshul Goel",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/goel4ever/usage-gulp.git"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "gulp": "^3.8.11",
+    "gulp-browserify": "^0.5.1",
+    "gulp-concat": "^2.5.2",
+    "gulp-util": "^3.0.4"
+  }
+}
