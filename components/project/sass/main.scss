@@ -1,0 +1,10 @@
+$primaryColor: #eeccff;
+
+body {
+  $primaryColor: #ccc !global;
+  background: $primaryColor;
+}
+
+p {
+  color: $primaryColor;
+}
