@@ -6,11 +6,15 @@
 
 // require - Node method that tells that gulp is required by the code
 var gulp = require('gulp'),
-    gutil = require('gulp-util'),
-    concat = require('gulp-concat'),
-    jshint = require('gulp-jshint'),
+    addSrc = require('gulp-add-src'),
     browserify = require('gulp-browserify'),
-    compass = require('gulp-compass');
+    compass = require('gulp-compass'),
+    concat = require('gulp-concat'),
+    csslint = require('gulp-csslint'),
+    htmlhint = require('gulp-htmlhint'),
+    jshint = require('gulp-jshint'),
+    uglify = require('gulp-uglify'),
+    gutil = require('gulp-util');
 
 var jsSources = [
   'components/**/*.js'
@@ -45,4 +49,11 @@ gulp.task('sass', function() {
   gulp.src(sassSources)
     .pipe(compass())
     .gulp.dest(sassDestination);
+});
+
+gulp.task('uglify', function() {
+  gulp.src(jsSources)
+    .pipe(uglify()
+      .on('error', gutil.log))
+    .pipe(gulp.dest(jsDestination));
 });
