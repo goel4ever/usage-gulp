@@ -7,7 +7,8 @@
     "type": "git",
     "url": "https://github.com/goel4ever/usage-gulp.git"
   },
-  "dependencies": {},
+  "dependencies": {
+  },
   "devDependencies": {
     "gulp": "^3.8.11",
     "gulp-add-src": "^0.2.0",
