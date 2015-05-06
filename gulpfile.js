@@ -33,7 +33,7 @@ gulp.task('js', function() {
     .pipe(gulp.dest(jsDestination));
 });
 
-gulp.task('', function() {
+gulp.task('sass', function() {
   gulp.src(sassSources)
     .pipe(compass())
     .gulp.dest(sassDestination);

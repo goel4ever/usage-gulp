@@ -11,6 +11,7 @@
   "devDependencies": {
     "gulp": "^3.8.11",
     "gulp-browserify": "^0.5.1",
+    "gulp-compass": "^2.0.4",
     "gulp-concat": "^2.5.2",
     "gulp-util": "^3.0.4"
   }
