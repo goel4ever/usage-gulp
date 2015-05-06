@@ -10,10 +10,14 @@
   "dependencies": {},
   "devDependencies": {
     "gulp": "^3.8.11",
+    "gulp-add-src": "^0.2.0",
     "gulp-browserify": "^0.5.1",
     "gulp-compass": "^2.0.4",
     "gulp-concat": "^2.5.2",
+    "gulp-csslint": "^0.1.5",
+    "gulp-htmlhint": "^0.1.1",
     "gulp-jshint": "^1.10.0",
+    "gulp-uglify": "^1.2.0",
     "gulp-util": "^3.0.4"
   }
 }
