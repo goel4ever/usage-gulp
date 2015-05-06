@@ -1,0 +1,38 @@
+@color-base: #2d5e8b;
+
+.class1 {
+  background-color: @color-base;
+}
+.class2 {
+  background-color: #fff;
+  color: @color-base;
+}
+.class3 {
+  border: 1px solid @color-base;
+}
+
+nav {
+  height: 40px;
+  width: 100%;
+  background: #455868;
+  border-bottom: 2px solid #283744;
+  li {
+    width: 600px;
+    height: 40px;
+    a {
+      color: #fff;
+      line-height: 40px;
+      text-shadow: 1px 1px 0px #283744;
+    }
+  }
+}
+
+a {
+  color: #fff;
+  line-height: 40px;
+  text-shadow: 1px 1px 0px #283744;
+  &:hover {
+    background-color: #000;
+    color: #fff;
+  }
+}
