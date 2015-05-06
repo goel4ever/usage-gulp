@@ -1,0 +1,7 @@
+# Created by .ignore support plugin (hsz.mobi)
+
+## Directory-based project format:
+.idea/
+
+## Ignore Node Modules
+node_modules
