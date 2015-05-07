@@ -7,6 +7,9 @@
 node_modules
 npm-debug.log
 
+## Ignore bower packages
+bower_components
+
 ## Ignore user generated files
 build
 builds
