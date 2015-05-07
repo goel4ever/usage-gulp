@@ -14,7 +14,8 @@ var gulp = require('gulp'),
     htmlhint = require('gulp-htmlhint'),
     jshint = require('gulp-jshint'),
     uglify = require('gulp-uglify'),
-    gutil = require('gulp-util');
+    gutil = require('gulp-util'),
+    preen = require('preen');
 
 var jsSources = [
   'components/**/*.js'
@@ -56,4 +57,8 @@ gulp.task('uglify', function() {
     .pipe(uglify()
       .on('error', gutil.log))
     .pipe(gulp.dest(jsDestination));
+});
+
+gulp.task('preen', function(cb) {
+  preen.preen({}, cb);
 });
