@@ -88,6 +88,13 @@ gulp.task('clean:tmp', function(cb) {
     'tmp'
   ], cb);
 });
+/**
+ * Task [Clean:Preen] - Meant to delete files that are not required in the package when building or working.
+ * Configuration is based on definition in bower.json
+ */
+gulp.task('clean:preen', function(cb) {
+  preen.preen({}, cb);
+});
 // Add header to each file generated
 gulp.task('add:header', function() {
   gulp.src(jsAppDestination + '/**/*')
@@ -147,12 +154,6 @@ gulp.task('sass', function() {
     .pipe(gulp.dest(cssAppDestination));
 });
 
-/**
- * Task [Preen] - Meant to delete files that are not required in the package when building or working
- */
-gulp.task('preen', function(cb) {
-  preen.preen({}, cb);
-});
 
 
 /**
