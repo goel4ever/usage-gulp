@@ -1,5 +1,5 @@
 # usage-gulp [![Build Status](https://travis-ci.org/goel4ever/usage-gulp.svg?branch=master)](https://travis-ci.org/goel4ever/usage-gulp)
-Sample gulp tasks encoded for future references
+Sample gulp tasks encoded for future references focusing on Workflow Management.
 
 ## Assumptions
 You have node and npm installed already.
