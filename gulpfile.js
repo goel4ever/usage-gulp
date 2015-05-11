@@ -16,6 +16,7 @@
  * d. Concatenate the files into modularized files
  * e. Save the final files
  * f. Replace the references in template
+ * g. Copy remaining files to the dist folder, for e.g., images, fonts
  *
  * Tasks that a build manager would be required to do:
  * 1. Lint JS
@@ -43,8 +44,11 @@
 // require - Node method that tells that gulp is required by the code
 var gulp = require('gulp'),
     del = require('del'),
+    add_header = require('gulp-header'),
     // Add more 'src' files at any point in the pipeline
     addSrc = require('gulp-add-src'),
+    // Replace etc with etc
+    replace = require('gulp-replace'),
     compass = require('gulp-compass'),
     concat = require('gulp-concat'),
     csslint = require('gulp-csslint'),
@@ -59,22 +63,6 @@ var gulp = require('gulp'),
     gutil = require('gulp-util'),
     preen = require('preen');
 
-/**
- * [START] - Find all the files =====================================
- */
-var jsSources = [
-  'components/**/*.js'
-];
-var jsDestination = 'dist/development/js';
-
-var sassSources = [
-  'components/**/*.scss'
-];
-var sassDestination = 'dist/development/css';
-/**
- * [END] - Find all the files =======================================
- */
-
 
 /**
  * [START] - Define executable tasks ================================
@@ -84,7 +72,12 @@ gulp.task('clean:dist', function(cb) {
   del([
     // here we use a globbing pattern to match everything inside the `dist` folder
     'dist/**/*',
+    // Delete the folder itself
+    'dist',
+    // TODO: Negation does not work as of now. Figure out an alternative.
     // we don't want to clean this file though so we negate the pattern
+    // TODO: remove script.js file once solution identified
+    '!dist/development/js/script.js',
     '!dist/mobile/deploy.json'
   ], cb);
 });
@@ -92,8 +85,22 @@ gulp.task('clean:dist', function(cb) {
 gulp.task('clean:tmp', function(cb) {
   del([
     // here we use a globbing pattern to match everything inside the `dist` folder
-    'tmp/**/*'
+    'tmp'
   ], cb);
+});
+// Add header to each file generated
+gulp.task('add:header', function() {
+  gulp.src(jsAppDestination + '/**/*')
+    .pipe(add_header("/* This file is auto-generated — do not edit by hand! */\n"))
+    .pipe(gulp.dest(jsAppDestination));
+
+  gulp.src(cssAppDestination + '/**/*.css')
+    .pipe(add_header("/* This file is auto-generated — do not edit by hand! */\n"))
+    .pipe(gulp.dest(cssAppDestination));
+
+  gulp.src(htmlAppDestination + '/**/*.html')
+    .pipe(add_header("<!-- This file is auto-generated — do not edit by hand! -->\n"))
+    .pipe(gulp.dest(htmlAppDestination));
 });
 /**
  * [END] - Define executable tasks ==================================
@@ -104,39 +111,40 @@ gulp.task('clean:tmp', function(cb) {
  * Task [JSHint] - Meant to lint JS files
  */
 gulp.task('lint:js', function() {
-  gulp.src(jsSources)
+  return gulp.src(jsAppSources)
     .pipe(jshint()
       .on('error', gutil.log))
-    .pipe(gulp.dest(jsDestination));
-});
-
-/**
- * Task [js] - Meant to Concatenate JS files into one single file
- */
-gulp.task('concat:js', function() {
-  gulp.src(jsSources)
-    .pipe(concat('script.js')
-      .on('error', gutil.log))
-    .pipe(gulp.dest(jsDestination));
+    .pipe(gulp.dest(jsAppDestination));
 });
 
 /**
  * Task [Uglify] - Meant for logging purposes as of now
  */
-gulp.task('uglify:js', function() {
-  gulp.src(jsSources)
+gulp.task('uglify:js', ['lint:js'], function() {
+  return gulp.src(jsAppSources)
     .pipe(uglify()
       .on('error', gutil.log))
-    .pipe(gulp.dest(jsDestination));
+    .pipe(gulp.dest(jsAppDestination));
+});
+
+/**
+ * Task [js] - Meant to Concatenate JS files into one single file
+ */
+gulp.task('concat:js', ['lint:js', 'uglify:js'], function() {
+  return gulp.src(jsAppSources)
+    .pipe(concat('script.js')
+      .on('error', gutil.log))
+    .pipe(gulp.dest(jsAppDestination));
 });
 
 /**
  * Task [Sass] - Meant for Compiling Sass (.scss) files to CSS file
  */
 gulp.task('sass', function() {
-  gulp.src(sassSources)
-    .pipe(compass())
-    .gulp.dest(sassDestination);
+  gulp.src(cssAppSources)
+    .pipe(compass()
+      .on('error', gutil.log))
+    .pipe(gulp.dest(cssAppDestination));
 });
 
 /**
@@ -146,13 +154,79 @@ gulp.task('preen', function(cb) {
   preen.preen({}, cb);
 });
 
+
+/**
+ * [START] - Find all the files =====================================
+ */
+var jsAppSources = [
+  'components/**/*.js'
+];
+var jsVendorSources = [
+  'components/**/*.js'
+];
+var jsAppDestination = 'dist/development/js';
+var jsVendorDestination = 'dist/development/js';
+
+var cssAppSources = [
+  //'components/**/*.scss',
+  'components/project/sass/main.scss'
+];
+var cssVendorSources = [
+  'components/**/*.scss'
+];
+var cssAppDestination = 'dist/development/css';
+var cssVendorDestination = 'dist/development/css';
+
+var htmlAppSources = [
+  'components/**/*.html'
+];
+var htmlAppDestination = 'dist/development/html';
+/**
+ * [END] - Find all the files =======================================
+ */
+
+
+
+/**
+ * [START] - Tasks built to handle individual components =========================
+ */
+// TODO: Can have asynchronous tasks only during dependencies, which includes processing on js/html/css
+gulp.task('build:js', ['lint:js', 'uglify:js', 'concat:js', 'add:header'], function() {
+  console.log('Main JS Task completed');
+});
+gulp.task('build:css', ['sass'], function() {
+  console.log('Main CSS Task completed');
+});
+gulp.task('build:html', ['html'], function() {
+  console.log('Main HTML Task completed');
+});
+gulp.task('server', ['clean:dist', 'clean:tmp']);
+
+gulp.task('temporary', ['clean:dist', 'concat:js', 'clean:tmp'], function() {
+  console.log('Main HTML Task completed');
+});
+/**
+ * [END] - Tasks built to handle individual components ===========================
+ */
+
+
+
 /**
  * [START] - Tasks to be exported for consumption ================================
  */
-gulp.task('default', ['clean:dist', 'concat:js', 'uglify:js', 'clean:tmp']);
-gulp.task('build', ['clean:dist', 'clean:tmp']);
-gulp.task('debug', ['clean:dist', 'clean:tmp']);
-gulp.task('release', ['clean:dist', 'clean:tmp']);
+// TODO: Can have asynchronous tasks only during dependencies, which includes processing on js/html/css
+gulp.task('default', ['build:js', 'build:css'], function() {
+  console.log('Default Task completed');
+});
+gulp.task('build', ['build:js', 'build:css', 'build:html'], function() {
+  console.log('Build Task completed');
+});
+gulp.task('debug', ['clean:dist', 'clean:tmp'], function() {
+  console.log('Debug Task completed');
+});
+gulp.task('release', ['clean:dist', 'clean:tmp'], function() {
+  console.log('Release Task completed');
+});
 /**
  * [END] - Tasks to be exported for consumption ==================================
  */
