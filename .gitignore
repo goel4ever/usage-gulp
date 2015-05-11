@@ -13,3 +13,4 @@ bower_components
 ## Ignore user generated files
 build
 builds
+dist
