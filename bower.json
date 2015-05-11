@@ -20,7 +20,11 @@
   ],
   "license": "MIT",
   "ignore": [
-    "**/.*",
+    ".bowerrc",
+    ".gitignore",
+    ".jshintrc",
+    ".travis.yml",
+    "package.json",
     "node_modules",
     "bower_components",
     "test",
