@@ -3,6 +3,10 @@
   "version": "0.0.1",
   "description": "Project hosting sample code for Gulp for future references",
   "author": "Anshul Goel",
+  "contributors": [{
+  	"name": "Anshul Goel",
+  	"email": "dec.anshul@gmail.com"
+  }],
   "repository": {
     "type": "git",
     "url": "https://github.com/goel4ever/usage-gulp.git"
