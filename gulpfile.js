@@ -5,6 +5,18 @@
 'use strict';
 
 /**
+ * ===================================================
+ * Workflow Management::
+ * ===================================================
+ *
+ * Start by:
+ * a. Clean existing folder
+ * b. Find all the files being used
+ * c. Minify the files
+ * d. Concatenate the files into modularized files
+ * e. Save the final files
+ * f. Replace the references in template
+ *
  * Tasks that a build manager would be required to do:
  * 1. Lint JS
  * 2. Concat JS (into modular js files in temp folder or something)
@@ -25,43 +37,73 @@
  * 14. Create a server
  *
  * 15. Can we Multi-thread few tasks that are unrelated???
+ * 16. Build failure management??
  *
  */
 // require - Node method that tells that gulp is required by the code
 var gulp = require('gulp'),
+    del = require('del'),
+    // Add more 'src' files at any point in the pipeline
     addSrc = require('gulp-add-src'),
-    browserify = require('gulp-browserify'),
     compass = require('gulp-compass'),
     concat = require('gulp-concat'),
     csslint = require('gulp-csslint'),
     htmlhint = require('gulp-htmlhint'),
     jshint = require('gulp-jshint'),
+    //
+    usemin = require('gulp-usemin'),
+    //
     uglify = require('gulp-uglify'),
+    // Minify CSS files
+    minify_css = require('gulp-minify-css'),
     gutil = require('gulp-util'),
     preen = require('preen');
 
+/**
+ * [START] - Find all the files =====================================
+ */
 var jsSources = [
   'components/**/*.js'
 ];
-var jsDestination = 'builds/development/js';
+var jsDestination = 'dist/development/js';
 
 var sassSources = [
   'components/**/*.scss'
 ];
-var sassDestination = 'builds/development/css';
+var sassDestination = 'dist/development/css';
+/**
+ * [END] - Find all the files =======================================
+ */
+
 
 /**
- * Task [Default] - Meant for logging purposes as of now
+ * [START] - Define executable tasks ================================
  */
-gulp.task('default', function() {
-  gutil.log('Learning Gulp')
-    .on('error', gutil.log);
+// Clean Distribution folder before executing any task
+gulp.task('clean:dist', function(cb) {
+  del([
+    // here we use a globbing pattern to match everything inside the `dist` folder
+    'dist/**/*',
+    // we don't want to clean this file though so we negate the pattern
+    '!dist/mobile/deploy.json'
+  ], cb);
 });
+// Clean Temporary folder after executing all tasks
+gulp.task('clean:tmp', function(cb) {
+  del([
+    // here we use a globbing pattern to match everything inside the `dist` folder
+    'tmp/**/*'
+  ], cb);
+});
+/**
+ * [END] - Define executable tasks ==================================
+ */
+
 
 /**
  * Task [JSHint] - Meant to lint JS files
  */
-gulp.task('jshint', function() {
+gulp.task('lint:js', function() {
   gulp.src(jsSources)
     .pipe(jshint()
       .on('error', gutil.log))
@@ -71,7 +113,7 @@ gulp.task('jshint', function() {
 /**
  * Task [js] - Meant to Concatenate JS files into one single file
  */
-gulp.task('js', function() {
+gulp.task('concat:js', function() {
   gulp.src(jsSources)
     .pipe(concat('script.js')
       .on('error', gutil.log))
@@ -79,9 +121,9 @@ gulp.task('js', function() {
 });
 
 /**
- * Task [Default] - Meant for logging purposes as of now
+ * Task [Uglify] - Meant for logging purposes as of now
  */
-gulp.task('uglify', function() {
+gulp.task('uglify:js', function() {
   gulp.src(jsSources)
     .pipe(uglify()
       .on('error', gutil.log))
@@ -103,3 +145,14 @@ gulp.task('sass', function() {
 gulp.task('preen', function(cb) {
   preen.preen({}, cb);
 });
+
+/**
+ * [START] - Tasks to be exported for consumption ================================
+ */
+gulp.task('default', ['clean:dist', 'concat:js', 'uglify:js', 'clean:tmp']);
+gulp.task('build', ['clean:dist', 'clean:tmp']);
+gulp.task('debug', ['clean:dist', 'clean:tmp']);
+gulp.task('release', ['clean:dist', 'clean:tmp']);
+/**
+ * [END] - Tasks to be exported for consumption ==================================
+ */
