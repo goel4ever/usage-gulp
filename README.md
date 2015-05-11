@@ -1,5 +1,7 @@
 # usage-gulp [![Build Status](https://travis-ci.org/goel4ever/usage-gulp.svg?branch=master)](https://travis-ci.org/goel4ever/usage-gulp)
-Sample gulp tasks encoded for future references focusing on Workflow Management.<br>
+Often I hear folks struggling with workflow management with what tool to use or what plugin to incorporate in process?<br>
+Here is a sample project with gulp tasks encoded for future references focusing on Workflow Management.
+I've tried to document most information as I understand and I tend to keep updating it. Please feel free to point out issues or contribute as you like.<br>
 [Check out the 'notes' folder for further details]
 
 ## Assumptions
@@ -28,7 +30,12 @@ Can WFM be independent of directory structure or even close to?
 What am I going to give you via this project?
 
 ## References:
-https://github.com/gulpjs/gulp/tree/master/docs/recipes
+https://github.com/gulpjs/gulp/tree/master/docs/recipes <br>
+https://blog.engineyard.com/2014/frontend-dependencies-management-part-2
 
 ## PS:
 Please feel free to leave feedback or contribute to the project.
+
+### Random notes:
+Autoprefixer - https://css-tricks.com/autoprefixer/ <br>
+SourceMaps - http://www.html5rocks.com/en/tutorials/developertools/sourcemaps/
