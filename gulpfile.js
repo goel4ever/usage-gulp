@@ -158,6 +158,16 @@ gulp.task('sass', function() {
     .pipe(gulp.dest(cssAppDestination));
 });
 
+/**
+ * Task [util:copy] - Meant to provide a way to copy files or folder from source to destination
+ */
+gulp.task('util:copy', function() {
+  gulp.src(jsAppSources)
+    .pipe(copy()
+      .on('error', gutil.log))
+    .pipe(gulp.dest(jsAppDestination));
+});
+
 
 
 /**
