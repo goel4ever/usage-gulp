@@ -7,3 +7,5 @@
 var sampleTwo = function() {
   console.log('Inside Sample Two function');
 };
+
+sampleTwo();

@@ -7,3 +7,5 @@
 var sampleOne = function(counter) {
   console.log('Inside Sample One function at ' + counter);
 };
+
+sampleOne(1);

@@ -4,8 +4,8 @@
 
 'use strict';
 
-// Calling Sample One function
-sampleOne(1);
+var sampleStart = function() {
+  console.log('Inside Sample Start function');
+};
 
-// Calling Sample Two function
-sampleTwo();
+sampleStart();
