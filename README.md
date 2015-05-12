@@ -38,5 +38,7 @@ Please feel free to leave feedback or contribute to the project.
 
 ### Random notes:
 Autoprefixer - https://css-tricks.com/autoprefixer/ <br>
+JSHint - https://www.npmjs.com/package/gulp-jshint <br>
+JSHint config - http://jshint.com/docs/options/ <br>
 Preen - https://www.npmjs.com/package/preen <br>
 SourceMaps - http://www.html5rocks.com/en/tutorials/developertools/sourcemaps/

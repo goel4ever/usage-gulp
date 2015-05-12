@@ -54,6 +54,7 @@ var gulp = require('gulp'),
     csslint = require('gulp-csslint'),
     htmlhint = require('gulp-htmlhint'),
     jshint = require('gulp-jshint'),
+    jshint_stylish = require('jshint-stylish'),
     //
     usemin = require('gulp-usemin'),
     //
@@ -61,7 +62,8 @@ var gulp = require('gulp'),
     // Minify CSS files
     minify_css = require('gulp-minify-css'),
     gutil = require('gulp-util'),
-    preen = require('preen');
+    preen = require('preen'),
+    copy = require('gulp-contrib-copy');
 
 
 /**
@@ -88,13 +90,6 @@ gulp.task('clean:tmp', function(cb) {
     'tmp'
   ], cb);
 });
-/**
- * Task [Clean:Preen] - Meant to delete files that are not required in the package when building or working.
- * Configuration is based on definition in bower.json
- */
-gulp.task('clean:preen', function(cb) {
-  preen.preen({}, cb);
-});
 // Add header to each file generated
 gulp.task('add:header', function() {
   gulp.src(jsAppDestination + '/**/*')
@@ -118,10 +113,12 @@ gulp.task('add:header', function() {
  * Task [JSHint] - Meant to lint JS files
  */
 gulp.task('lint:js', function() {
-  return gulp.src(jsAppSources)
+  gulp.src(jsAppSources)
     .pipe(jshint()
       .on('error', gutil.log))
-    .pipe(gulp.dest(jsAppDestination));
+    .pipe(jshint.reporter("default"));
+    // New plugin is good but needs more work as converting errors to warning. Switching back as of now.
+    //.pipe(jshint.reporter(jshint_stylish));
 });
 
 /**
@@ -162,26 +159,25 @@ gulp.task('sass', function() {
 var jsAppSources = [
   'components/**/*.js'
 ];
-var jsVendorSources = [
-  'components/**/*.js'
-];
 var jsAppDestination = 'dist/development/js';
-var jsVendorDestination = 'dist/development/js';
-
 var cssAppSources = [
   //'components/**/*.scss',
   'components/project/sass/main.scss'
 ];
-var cssVendorSources = [
-  'components/**/*.scss'
-];
 var cssAppDestination = 'dist/development/css';
-var cssVendorDestination = 'dist/development/css';
-
 var htmlAppSources = [
   'components/**/*.html'
 ];
 var htmlAppDestination = 'dist/development/html';
+
+var jsVendorSources = [
+  'bower_components/**/*.js'
+];
+var jsVendorDestination = 'dist/development/js';
+var cssVendorSources = [
+  'bower_components/**/*.scss'
+];
+var cssVendorDestination = 'dist/development/css';
 /**
  * [END] - Find all the files =======================================
  */
