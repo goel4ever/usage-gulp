@@ -10,13 +10,15 @@
  * ===================================================
  *
  * Start by:
- * a. Clean existing folder
- * b. Find all the files being used
- * c. Minify the files
- * d. Concatenate the files into modularized files
- * e. Save the final files
- * f. Replace the references in template
- * g. Copy remaining files to the dist folder, for e.g., images, fonts
+ * a. Clean existing distribution folder
+ * b. Preen bower packages based on need and configuration in bower json
+ * c. Find all files in bower components and create one each js/css by concatenating only (call it vendor.js and vendor.css)
+ * d. Find all the files being used from source
+ * e. Minify the files
+ * f. Concatenate the files into modularized files
+ * g. Save the final files
+ * h. Replace the references in template
+ * i. Copy remaining files to the dist folder, for e.g., images, fonts
  *
  * Tasks that a build manager would be required to do:
  * 1. Lint JS
@@ -38,7 +40,7 @@
  * 14. Create a server
  *
  * 15. Can we Multi-thread few tasks that are unrelated???
- * 16. Build failure management??
+ * 16. Build failure management?? Exit on error and not proceed further.
  *
  */
 // require - Node method that tells that gulp is required by the code
@@ -63,7 +65,8 @@ var gulp = require('gulp'),
     minify_css = require('gulp-minify-css'),
     gutil = require('gulp-util'),
     preen = require('preen'),
-    copy = require('gulp-contrib-copy');
+    copy = require('gulp-contrib-copy'),
+    watch = require('gulp-watch');
 
 
 /**
@@ -215,7 +218,9 @@ gulp.task('build:html', ['html'], function() {
   console.log('Main HTML Task completed');
 });
 gulp.task('server', ['clean:dist', 'clean:tmp']);
-
+gulp.task('watch', function() {
+  gulp.watch("components/**/*.js", ['lint:js']);
+});
 gulp.task('temporary', ['clean:dist', 'concat:js', 'clean:tmp'], function() {
   console.log('Main HTML Task completed');
 });
