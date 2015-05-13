@@ -111,7 +111,9 @@ var gulp        = require('gulp'),
     //
     usemin      = require('gulp-usemin'),
     gutil       = require('gulp-util'),
-    watch       = require('gulp-watch');
+    watch       = require('gulp-watch'),
+
+    templateCache = require('gulp-angular-templatecache');
 
 
 /**
@@ -236,7 +238,8 @@ gulp.task('build:html', function() {
   gulp.src(htmlAppSources)
     .pipe(htmlhint()
       .on('error', gutil.log))
-    .pipe(minify_html({empty: true})
+    .pipe(templateCache())
+    .pipe(minify_html({empty: true, collapseWhitespace: true, collapseBooleanAttributes: true })
       .on('error', gutil.log))
     .pipe(gulp.dest(htmlDestination));
 });
