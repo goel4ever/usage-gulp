@@ -2,7 +2,9 @@
 Often I hear folks struggling with workflow management with what tool to use or what plugin to incorporate in process?<br>
 Here is a sample project with gulp tasks encoded for future references focusing on Workflow Management.
 I've tried to document most information as I understand and I tend to keep updating it. Please feel free to point out issues or contribute as you like.<br>
-[Check out the 'notes' folder for further details]
+<br>
+While writing this package, I realized that there are several ways of structuring package management. I've included few samples in a folder with explanations alongside.<br>
+[Check out the 'samples' folder for further details]
 
 ## Assumptions
 You have node and npm installed already.
