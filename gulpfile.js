@@ -45,6 +45,41 @@
  * 17. How about adding Git hooks?
  *
  */
+
+
+/**
+ * [START] - Find all the files =====================================
+ */
+var allSources = 'components';
+var allDestination = 'dist';
+
+var jsAppSources = [
+  'components/**/*.js'
+];
+var jsVendorSources = [
+  'bower_components/**/*.js'
+];
+var jsDestination = 'dist/scripts';
+
+var cssAppSources = [
+  'components/project/'
+];
+var cssVendorSources = [
+  'bower_components/**/*.min.css',
+];
+var cssDestination = 'dist/styles';
+
+var htmlAppSources = [
+  'components/**/*.html'
+];
+var htmlDestination = 'dist/html';
+
+/**
+ * [END] - Find all the files =======================================
+ */
+
+
+
 // require - Node method that tells that gulp is required by the code
 var gulp = require('gulp'),
     runSequence = require('run-sequence'),
@@ -57,18 +92,22 @@ var gulp = require('gulp'),
     addSrc = require('gulp-add-src'),
     // Replace etc with etc
     replace = require('gulp-replace'),
-    compass = require('gulp-compass'),
-    concat = require('gulp-concat'),
+
     csslint = require('gulp-csslint'),
-    htmlhint = require('gulp-htmlhint'),
-    jshint = require('gulp-jshint'),
-    jshint_stylish = require('jshint-stylish'),
-    //
-    usemin = require('gulp-usemin'),
-    //
-    uglify = require('gulp-uglify'),
+    less = require('gulp-less'),
+    compass = require('gulp-compass'),
     // Minify CSS files
     minify_css = require('gulp-minify-css'),
+
+    htmlhint = require('gulp-htmlhint'),
+
+    jshint = require('gulp-jshint'),
+    jshint_stylish = require('jshint-stylish'),
+    // Concatenate files
+    concat = require('gulp-concat'),
+    uglify = require('gulp-uglify'),
+    //
+    usemin = require('gulp-usemin'),
     gutil = require('gulp-util'),
     watch = require('gulp-watch');
 
@@ -125,120 +164,70 @@ gulp.task('util:copy', function() {
   gulp.src(jsAppSources)
     .pipe(copy()
       .on('error', gutil.log))
-    .pipe(gulp.dest(jsAppDestination));
+    .pipe(gulp.dest(jsDestination));
 });
 // Add header to each file generated
 gulp.task('util:add:header', function() {
-  gulp.src(jsAppDestination + '/**/*')
+  gulp.src(jsDestination + '/**/*.js')
     .pipe(add_header("/* This file is auto-generated — do not edit by hand! */\n"))
-    .pipe(gulp.dest(jsAppDestination));
+    .pipe(gulp.dest(jsDestination));
 
-  gulp.src(cssAppDestination + '/**/*.css')
+  gulp.src(cssDestination + '/**/*.css')
     .pipe(add_header("/* This file is auto-generated — do not edit by hand! */\n"))
-    .pipe(gulp.dest(cssAppDestination));
+    .pipe(gulp.dest(cssDestination));
 
-  gulp.src(htmlAppDestination + '/**/*.html')
+  gulp.src(htmlDestination + '/**/*.html')
     .pipe(add_header("<!-- This file is auto-generated — do not edit by hand! -->\n"))
-    .pipe(gulp.dest(htmlAppDestination));
+    .pipe(gulp.dest(htmlDestination));
 });
 /**
  * [END] - Define executable tasks ==================================
  */
 
 
-/**
- * Task [JSHint] - Meant to lint JS files
- */
-gulp.task('lint:js', function() {
-  gulp.src(jsAppSources)
-    .pipe(jshint()
-      .on('error', gutil.log))
-    .pipe(jshint.reporter("default"));
-    // New plugin is good but needs more work as converting errors to warning. Switching back as of now.
-    //.pipe(jshint.reporter(jshint_stylish));
-});
-
-/**
- * Task [Uglify] - Meant for logging purposes as of now
- */
-gulp.task('uglify:js', function() {
-  return gulp.src(jsAppSources)
-    .pipe(uglify()
-      .on('error', gutil.log))
-    .pipe(gulp.dest(jsAppDestination));
-});
-
-/**
- * Task [js] - Meant to Concatenate JS files into one single file
- */
-gulp.task('concat:js', function() {
-  return gulp.src(jsAppSources)
-    .pipe(concat('script.js')
-      .on('error', gutil.log))
-    .pipe(gulp.dest(jsAppDestination));
-});
-
-/**
- * Task [Sass] - Meant for Compiling Sass (.scss) files to CSS file
- */
-gulp.task('sass', function() {
-  gulp.src(cssAppSources)
-    .pipe(compass()
-      .on('error', gutil.log))
-    .pipe(gulp.dest(cssAppDestination));
-});
-
-
-
-/**
- * [START] - Find all the files =====================================
- */
-var allSources = 'components';
-var allDestination = 'dist';
-
-var jsAppSources = [
-  'components/**/*.js'
-];
-var jsAppDestination = 'dist/development/js';
-var cssAppSources = [
-  //'components/**/*.scss',
-  'components/project/sass/main.scss'
-];
-var cssAppDestination = 'dist/development/css';
-var htmlAppSources = [
-  'components/**/*.html'
-];
-var htmlAppDestination = 'dist/development/html';
-
-var jsVendorSources = [
-  'bower_components/**/*.js'
-];
-var jsVendorDestination = 'dist/development/js';
-var cssVendorSources = [
-  'bower_components/**/*.scss'
-];
-var cssVendorDestination = 'dist/development/css';
-/**
- * [END] - Find all the files =======================================
- */
-
 
 
 /**
  * [START] - Tasks built to handle individual components =========================
  */
-// TODO: Can have asynchronous tasks only during dependencies, which includes processing on js/html/css
-gulp.task('build:js', function(cb) {
-  runSequence(
-    'lint:js',
-    'uglify:js',
-    'concat:js',
-    cb);
-  console.log('Main JS Task completed');
+gulp.task('build:js', function() {
+  gulp.src(jsAppSources)
+    .pipe(jshint()
+      .on('error', gutil.log))
+    .pipe(jshint.reporter("default"))
+    .pipe(uglify()
+      .on('error', gutil.log))
+    .pipe(concat('script.min.js')
+      .on('error', gutil.log))
+    .pipe(gulp.dest(jsDestination));
+
+  gulp.src(jsVendorSources)
+    .pipe(concat('vendor.min.js')
+      .on('error', gutil.log))
+    .pipe(gulp.dest(jsDestination));
 });
-gulp.task('build:css', ['sass'], function() {
-  console.log('Main CSS Task completed');
+
+gulp.task('build:css', function() {
+  gulp.src([
+    cssAppSources + '**/*.less',
+    cssAppSources + '**/*.css'
+  ])
+    .pipe(csslint())
+    .pipe(csslint.reporter())
+    .pipe(less()
+      .on('error', gutil.log))
+    .pipe(concat('main.min.css')
+      .on('error', gutil.log))
+    .pipe(minify_css()
+      .on('error', gutil.log))
+    .pipe(gulp.dest(cssDestination));
+
+  gulp.src(cssVendorSources)
+    .pipe(concat('vendor.min.css')
+      .on('error', gutil.log))
+    .pipe(gulp.dest(cssDestination));
 });
+
 gulp.task('build:html', function() {
   console.log('Main HTML Task completed');
 });
@@ -255,6 +244,16 @@ gulp.task('watch', function() {
 /**
  * [START] - Tasks to be exported for consumption ================================
  */
+gulp.task('default', function(cb) {
+  runSequence(
+    ['util:clean:dist', 'util:clean:preen'],
+    ['build:js', 'build:css', 'build:html'],
+    'util:add:header',
+    //'server',
+    //'watch',
+    cb);
+  console.log('Default Task completed');
+});
 gulp.task('build', ['build:js', 'build:css', 'build:html'], function() {
   console.log('Build Task completed');
 });
