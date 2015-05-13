@@ -11,6 +11,7 @@
  *
  * Start by:
  * a. Clean existing distribution folder
+ * a. Bower install all the components
  * b. Preen bower packages based on need and configuration in bower json
  * c. Find all files in bower components and create one each js/css by concatenating only (call it vendor.js and vendor.css)
  * d. Find all the files being used from source
@@ -82,6 +83,7 @@ var htmlDestination = 'dist/html';
 
 // require - Node method that tells that gulp is required by the code
 var gulp        = require('gulp'),
+    bower = require('gulp-bower'),
     runSequence = require('run-sequence'),
     del         = require('del'),
     clean       = require('gulp-contrib-clean'),
@@ -120,6 +122,12 @@ var gulp        = require('gulp'),
  * [START] - Define executable tasks ================================
  */
 
+/**
+ * Task [util:install:bower] - Install bower components
+ */
+gulp.task('util:install:bower', function() {
+  return bower();
+});
 /**
  * Task [util:clean] - Meant to delete files and folders in a given path
  * 'dist/development/js/project/scripts/*'
@@ -259,7 +267,8 @@ gulp.task('watch', function() {
  */
 gulp.task('serve:build', function(cb) {
   runSequence(
-    ['util:clean:dist', 'util:clean:preen'],
+    ['util:clean:dist', 'util:install:bower'],
+    'util:clean:preen',
     ['build:js', 'build:css', 'build:html'],
     'util:add:header',
     //'server',
@@ -269,7 +278,8 @@ gulp.task('serve:build', function(cb) {
 });
 gulp.task('serve:debug', function(cb) {
   runSequence(
-    ['util:clean:dist', 'util:clean:preen'],
+    ['util:clean:dist', 'util:install:bower'],
+    'util:clean:preen',
     ['build:js', 'build:css', 'build:html'],
     'util:add:header',
     //'server',
@@ -279,7 +289,8 @@ gulp.task('serve:debug', function(cb) {
 });
 gulp.task('serve:release', function(cb) {
   runSequence(
-    ['util:clean:dist', 'util:clean:preen'],
+    ['util:clean:dist', 'util:install:bower'],
+    'util:clean:preen',
     ['build:js', 'build:css', 'build:html'],
     'util:add:header',
     //'server',
