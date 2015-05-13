@@ -18,7 +18,8 @@
  * f. Concatenate the files into modularized files
  * g. Save the final files
  * h. Replace the references in template
- * i. Copy remaining files to the dist folder, for e.g., images, fonts
+ * i. Add header to generated files
+ * j. Copy remaining files to the dist folder, for e.g., images, fonts
  *
  * Tasks that a build manager would be required to do:
  * 1. Lint JS
@@ -41,6 +42,7 @@
  *
  * 15. Can we Multi-thread few tasks that are unrelated???
  * 16. Build failure management?? Exit on error and not proceed further.
+ * 17. How about adding Git hooks?
  *
  */
 // require - Node method that tells that gulp is required by the code
@@ -66,6 +68,7 @@ var gulp = require('gulp'),
     gutil = require('gulp-util'),
     preen = require('preen'),
     copy = require('gulp-contrib-copy'),
+    clean = require('gulp-contrib-clean'),
     watch = require('gulp-watch');
 
 
@@ -171,11 +174,28 @@ gulp.task('util:copy', function() {
     .pipe(gulp.dest(jsAppDestination));
 });
 
+/**
+ * Task [util:clean] - Meant to delete files and folders in a given path
+ * 'dist/development/js/project/scripts/*'
+ * 'dist/development/js/project/scripts/**'
+ * 'dist/development/js/project/scripts/** /*'
+ * 'dist/development/js/project/** /*'
+ * 'dist/development/js/project/scripts'
+ * 'dist/development/js/project/scripts'
+ */
+gulp.task('util:clean', function() {
+  gulp.src(allDestination)
+    .pipe(clean());
+});
+
 
 
 /**
  * [START] - Find all the files =====================================
  */
+var allSources = 'components';
+var allDestination = 'dist';
+
 var jsAppSources = [
   'components/**/*.js'
 ];
@@ -233,10 +253,6 @@ gulp.task('temporary', ['clean:dist', 'concat:js', 'clean:tmp'], function() {
 /**
  * [START] - Tasks to be exported for consumption ================================
  */
-// TODO: Can have asynchronous tasks only during dependencies, which includes processing on js/html/css
-gulp.task('default', ['build:js', 'build:css'], function() {
-  console.log('Default Task completed');
-});
 gulp.task('build', ['build:js', 'build:css', 'build:html'], function() {
   console.log('Build Task completed');
 });
