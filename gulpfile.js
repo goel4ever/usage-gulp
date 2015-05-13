@@ -96,6 +96,7 @@ var gulp        = require('gulp'),
     csslint     = require('gulp-csslint'),
     less        = require('gulp-less'),
     compass     = require('gulp-compass'),
+    autoprefixer= require('gulp-autoprefixer'),
     // Minify CSS files
     minify_css  = require('gulp-minify-css'),
 
@@ -218,6 +219,8 @@ gulp.task('build:css', function() {
     .pipe(less()
       .on('error', gutil.log))
     .pipe(concat('main.min.css')
+      .on('error', gutil.log))
+    .pipe(autoprefixer()
       .on('error', gutil.log))
     .pipe(minify_css()
       .on('error', gutil.log))
