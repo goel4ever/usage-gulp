@@ -39,6 +39,7 @@
     "gulp-watch": "^4.2.4",
     "gulp-webserver": "^0.9.1",
     "jshint-stylish": "^1.0.2",
-    "preen": "^1.2.0"
+    "preen": "^1.2.0",
+    "run-sequence": "^1.1.0"
   }
 }

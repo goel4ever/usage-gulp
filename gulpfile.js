@@ -47,7 +47,11 @@
  */
 // require - Node method that tells that gulp is required by the code
 var gulp = require('gulp'),
+    runSequence = require('run-sequence'),
     del = require('del'),
+    clean = require('gulp-contrib-clean'),
+    copy = require('gulp-contrib-copy'),
+    preen = require('preen'),
     add_header = require('gulp-header'),
     // Add more 'src' files at any point in the pipeline
     addSrc = require('gulp-add-src'),
@@ -66,17 +70,28 @@ var gulp = require('gulp'),
     // Minify CSS files
     minify_css = require('gulp-minify-css'),
     gutil = require('gulp-util'),
-    preen = require('preen'),
-    copy = require('gulp-contrib-copy'),
-    clean = require('gulp-contrib-clean'),
     watch = require('gulp-watch');
 
 
 /**
  * [START] - Define executable tasks ================================
  */
+
+/**
+ * Task [util:clean] - Meant to delete files and folders in a given path
+ * 'dist/development/js/project/scripts/*'
+ * 'dist/development/js/project/scripts/**'
+ * 'dist/development/js/project/scripts/** /*'
+ * 'dist/development/js/project/** /*'
+ * 'dist/development/js/project/scripts'
+ * 'dist/development/js/project/scripts'
+ */
+gulp.task('util:clean', function() {
+  gulp.src(allDestination)
+    .pipe(clean());
+});
 // Clean Distribution folder before executing any task
-gulp.task('clean:dist', function(cb) {
+gulp.task('util:clean:dist', function(cb) {
   del([
     // here we use a globbing pattern to match everything inside the `dist` folder
     'dist/**/*',
@@ -90,21 +105,30 @@ gulp.task('clean:dist', function(cb) {
   ], cb);
 });
 // Clean Temporary folder after executing all tasks
-gulp.task('clean:tmp', function(cb) {
+gulp.task('util:clean:tmp', function(cb) {
   del([
     // here we use a globbing pattern to match everything inside the `dist` folder
     'tmp'
   ], cb);
 });
 /**
- * Task [Clean:Preen] - Meant to delete files that are not required in the package when building or working.
+ * Task [Util:Clean:Preen] - Meant to delete files that are not required in the package when building or working.
  * Configuration is based on definition in bower.json
  */
-gulp.task('clean:preen', function(cb) {
+gulp.task('util:clean:preen', function(cb) {
   preen.preen({}, cb);
 });
+/**
+ * Task [Util:Copy] - Meant to provide a way to copy files or folder from source to destination
+ */
+gulp.task('util:copy', function() {
+  gulp.src(jsAppSources)
+    .pipe(copy()
+      .on('error', gutil.log))
+    .pipe(gulp.dest(jsAppDestination));
+});
 // Add header to each file generated
-gulp.task('add:header', function() {
+gulp.task('util:add:header', function() {
   gulp.src(jsAppDestination + '/**/*')
     .pipe(add_header("/* This file is auto-generated — do not edit by hand! */\n"))
     .pipe(gulp.dest(jsAppDestination));
@@ -137,7 +161,7 @@ gulp.task('lint:js', function() {
 /**
  * Task [Uglify] - Meant for logging purposes as of now
  */
-gulp.task('uglify:js', ['lint:js'], function() {
+gulp.task('uglify:js', function() {
   return gulp.src(jsAppSources)
     .pipe(uglify()
       .on('error', gutil.log))
@@ -147,7 +171,7 @@ gulp.task('uglify:js', ['lint:js'], function() {
 /**
  * Task [js] - Meant to Concatenate JS files into one single file
  */
-gulp.task('concat:js', ['lint:js', 'uglify:js'], function() {
+gulp.task('concat:js', function() {
   return gulp.src(jsAppSources)
     .pipe(concat('script.js')
       .on('error', gutil.log))
@@ -162,30 +186,6 @@ gulp.task('sass', function() {
     .pipe(compass()
       .on('error', gutil.log))
     .pipe(gulp.dest(cssAppDestination));
-});
-
-/**
- * Task [util:copy] - Meant to provide a way to copy files or folder from source to destination
- */
-gulp.task('util:copy', function() {
-  gulp.src(jsAppSources)
-    .pipe(copy()
-      .on('error', gutil.log))
-    .pipe(gulp.dest(jsAppDestination));
-});
-
-/**
- * Task [util:clean] - Meant to delete files and folders in a given path
- * 'dist/development/js/project/scripts/*'
- * 'dist/development/js/project/scripts/**'
- * 'dist/development/js/project/scripts/** /*'
- * 'dist/development/js/project/** /*'
- * 'dist/development/js/project/scripts'
- * 'dist/development/js/project/scripts'
- */
-gulp.task('util:clean', function() {
-  gulp.src(allDestination)
-    .pipe(clean());
 });
 
 
@@ -228,21 +228,23 @@ var cssVendorDestination = 'dist/development/css';
  * [START] - Tasks built to handle individual components =========================
  */
 // TODO: Can have asynchronous tasks only during dependencies, which includes processing on js/html/css
-gulp.task('build:js', ['lint:js', 'uglify:js', 'concat:js', 'add:header'], function() {
+gulp.task('build:js', function(cb) {
+  runSequence(
+    'lint:js',
+    'uglify:js',
+    'concat:js',
+    cb);
   console.log('Main JS Task completed');
 });
 gulp.task('build:css', ['sass'], function() {
   console.log('Main CSS Task completed');
 });
-gulp.task('build:html', ['html'], function() {
+gulp.task('build:html', function() {
   console.log('Main HTML Task completed');
 });
-gulp.task('server', ['clean:dist', 'clean:tmp']);
+gulp.task('server', ['util:clean:dist', 'util:clean:tmp']);
 gulp.task('watch', function() {
   gulp.watch("components/**/*.js", ['lint:js']);
-});
-gulp.task('temporary', ['clean:dist', 'concat:js', 'clean:tmp'], function() {
-  console.log('Main HTML Task completed');
 });
 /**
  * [END] - Tasks built to handle individual components ===========================
@@ -256,10 +258,10 @@ gulp.task('temporary', ['clean:dist', 'concat:js', 'clean:tmp'], function() {
 gulp.task('build', ['build:js', 'build:css', 'build:html'], function() {
   console.log('Build Task completed');
 });
-gulp.task('debug', ['clean:dist', 'clean:tmp'], function() {
+gulp.task('debug', ['util:clean:dist', 'util:clean:tmp'], function() {
   console.log('Debug Task completed');
 });
-gulp.task('release', ['clean:dist', 'clean:tmp'], function() {
+gulp.task('release', ['util:clean:dist', 'util:clean:tmp'], function() {
   console.log('Release Task completed');
 });
 /**
