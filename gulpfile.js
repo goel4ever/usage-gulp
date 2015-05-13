@@ -81,35 +81,36 @@ var htmlDestination = 'dist/html';
 
 
 // require - Node method that tells that gulp is required by the code
-var gulp = require('gulp'),
+var gulp        = require('gulp'),
     runSequence = require('run-sequence'),
-    del = require('del'),
-    clean = require('gulp-contrib-clean'),
-    copy = require('gulp-contrib-copy'),
-    preen = require('preen'),
-    add_header = require('gulp-header'),
+    del         = require('del'),
+    clean       = require('gulp-contrib-clean'),
+    copy        = require('gulp-contrib-copy'),
+    preen       = require('preen'),
+    add_header  = require('gulp-header'),
     // Add more 'src' files at any point in the pipeline
-    addSrc = require('gulp-add-src'),
+    addSrc      = require('gulp-add-src'),
     // Replace etc with etc
-    replace = require('gulp-replace'),
+    replace     = require('gulp-replace'),
 
-    csslint = require('gulp-csslint'),
-    less = require('gulp-less'),
-    compass = require('gulp-compass'),
+    csslint     = require('gulp-csslint'),
+    less        = require('gulp-less'),
+    compass     = require('gulp-compass'),
     // Minify CSS files
-    minify_css = require('gulp-minify-css'),
+    minify_css  = require('gulp-minify-css'),
 
-    htmlhint = require('gulp-htmlhint'),
+    htmlhint    = require('gulp-htmlhint'),
+    minify_html = require('gulp-minify-html'),
 
-    jshint = require('gulp-jshint'),
+    jshint      = require('gulp-jshint'),
     jshint_stylish = require('jshint-stylish'),
     // Concatenate files
-    concat = require('gulp-concat'),
-    uglify = require('gulp-uglify'),
+    concat      = require('gulp-concat'),
+    uglify      = require('gulp-uglify'),
     //
-    usemin = require('gulp-usemin'),
-    gutil = require('gulp-util'),
-    watch = require('gulp-watch');
+    usemin      = require('gulp-usemin'),
+    gutil       = require('gulp-util'),
+    watch       = require('gulp-watch');
 
 
 /**
@@ -229,8 +230,14 @@ gulp.task('build:css', function() {
 });
 
 gulp.task('build:html', function() {
-  console.log('Main HTML Task completed');
+  gulp.src(htmlAppSources)
+    .pipe(htmlhint()
+      .on('error', gutil.log))
+    .pipe(minify_html()
+      .on('error', gutil.log))
+    .pipe(gulp.dest(htmlDestination));
 });
+
 gulp.task('server', ['util:clean:dist', 'util:clean:tmp']);
 gulp.task('watch', function() {
   gulp.watch("components/**/*.js", ['lint:js']);
