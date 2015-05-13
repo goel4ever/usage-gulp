@@ -233,7 +233,7 @@ gulp.task('build:html', function() {
   gulp.src(htmlAppSources)
     .pipe(htmlhint()
       .on('error', gutil.log))
-    .pipe(minify_html()
+    .pipe(minify_html({empty: true})
       .on('error', gutil.log))
     .pipe(gulp.dest(htmlDestination));
 });
@@ -251,7 +251,7 @@ gulp.task('watch', function() {
 /**
  * [START] - Tasks to be exported for consumption ================================
  */
-gulp.task('default', function(cb) {
+gulp.task('serve:build', function(cb) {
   runSequence(
     ['util:clean:dist', 'util:clean:preen'],
     ['build:js', 'build:css', 'build:html'],
@@ -261,13 +261,24 @@ gulp.task('default', function(cb) {
     cb);
   console.log('Default Task completed');
 });
-gulp.task('build', ['build:js', 'build:css', 'build:html'], function() {
-  console.log('Build Task completed');
-});
-gulp.task('debug', ['util:clean:dist', 'util:clean:tmp'], function() {
+gulp.task('serve:debug', function(cb) {
+  runSequence(
+    ['util:clean:dist', 'util:clean:preen'],
+    ['build:js', 'build:css', 'build:html'],
+    'util:add:header',
+    //'server',
+    //'watch',
+    cb);
   console.log('Debug Task completed');
 });
-gulp.task('release', ['util:clean:dist', 'util:clean:tmp'], function() {
+gulp.task('serve:release', function(cb) {
+  runSequence(
+    ['util:clean:dist', 'util:clean:preen'],
+    ['build:js', 'build:css', 'build:html'],
+    'util:add:header',
+    //'server',
+    //'watch',
+    cb);
   console.log('Release Task completed');
 });
 /**
