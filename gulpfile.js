@@ -47,6 +47,11 @@
  *
  */
 
+/*  Load the error handler
+---------------------------------------------------------------------------- */
+
+var errorHandler  = require('./libs/errorHandler');
+
 
 /**
  * [START] - Find all the files =====================================
@@ -174,8 +179,8 @@ gulp.task('util:clean:preen', function(cb) {
  */
 gulp.task('util:copy', function() {
   gulp.src(jsAppSources)
-    .pipe(copy()
-      .on('error', gutil.log))
+    .pipe(copy())
+    .on('error', errorHandler)
     .pipe(gulp.dest(jsDestination));
 });
 // Add header to each file generated
@@ -204,18 +209,17 @@ gulp.task('util:add:header', function() {
  */
 gulp.task('build:js', function() {
   gulp.src(jsAppSources)
-    .pipe(jshint()
-      .on('error', gutil.log))
+    .pipe(jshint())
     .pipe(jshint.reporter("default"))
-    .pipe(uglify()
-      .on('error', gutil.log))
-    .pipe(concat('script.min.js')
-      .on('error', gutil.log))
+    .pipe(uglify())
+    .on('error', errorHandler)
+    .pipe(concat('script.min.js'))
+    .on('error', errorHandler)
     .pipe(gulp.dest(jsDestination));
 
   gulp.src(jsVendorSources)
-    .pipe(concat('vendor.min.js')
-      .on('error', gutil.log))
+    .pipe(concat('vendor.min.js'))
+    .on('error', errorHandler)
     .pipe(gulp.dest(jsDestination));
 });
 
@@ -226,29 +230,28 @@ gulp.task('build:css', function() {
   ])
     .pipe(csslint())
     .pipe(csslint.reporter())
-    .pipe(less()
-      .on('error', gutil.log))
-    .pipe(concat('main.min.css')
-      .on('error', gutil.log))
-    .pipe(autoprefixer()
-      .on('error', gutil.log))
-    .pipe(minify_css()
-      .on('error', gutil.log))
+    .pipe(less())
+    .on('error', errorHandler)
+    .pipe(concat('main.min.css'))
+    .on('error', errorHandler)
+    .pipe(autoprefixer())
+    .on('error', errorHandler)
+    .pipe(minify_css())
+    .on('error', errorHandler)
     .pipe(gulp.dest(cssDestination));
 
   gulp.src(cssVendorSources)
-    .pipe(concat('vendor.min.css')
-      .on('error', gutil.log))
+    .pipe(concat('vendor.min.css'))
+    .on('error', errorHandler)
     .pipe(gulp.dest(cssDestination));
 });
 
 gulp.task('build:html', function() {
   gulp.src(htmlAppSources)
-    .pipe(htmlhint()
-      .on('error', gutil.log))
+    .pipe(htmlhint())
     .pipe(templateCache())
-    .pipe(minify_html({empty: true, collapseWhitespace: true, collapseBooleanAttributes: true })
-      .on('error', gutil.log))
+    .pipe(minify_html({empty: true, collapseWhitespace: true, collapseBooleanAttributes: true }))
+    .on('error', errorHandler)
     .pipe(gulp.dest(htmlDestination));
 });
 
