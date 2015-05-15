@@ -10,17 +10,17 @@
  * ===================================================
  *
  * Start by:
- * a. Clean existing distribution folder
- * a. Bower install all the components
- * b. Preen bower packages based on need and configuration in bower json
- * c. Find all files in bower components and create one each js/css by concatenating only (call it vendor.js and vendor.css)
- * d. Find all the files being used from source
- * e. Minify the files
- * f. Concatenate the files into modularized files
- * g. Save the final files
- * h. Replace the references in template
- * i. Add header to generated files
- * j. Copy remaining files to the dist folder, for e.g., images, fonts
+ * A. Clean existing distribution folder
+ * B. Bower install all the components
+ * C. Preen bower packages based on need and configuration in bower json
+ * D. Find all files in bower components and create one each js/css by concatenating only (call it vendor.js and vendor.css)
+ * E. Find all the files being used from source
+ * F. Minify the files
+ * G. Concatenate the files into modularized files
+ * H. Save the final files
+ * I. Replace the references in template
+ * J. Add header to generated files
+ * K. Copy remaining files to the dist folder, for e.g., images, fonts
  *
  * Tasks that a build manager would be required to do:
  * 1. Lint JS
