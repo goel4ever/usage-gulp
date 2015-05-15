@@ -52,33 +52,23 @@
 
 var errorHandler  = require('./libs/errorHandler');
 
-
+var CONFIG        = require('./config/build.config.js');
 /**
  * [START] - Find all the files =====================================
  */
-var allSources = 'components';
-var allDestination = 'dist';
+var allSources = CONFIG.src.path;
+var allDestination = CONFIG.dest.path;
 
-var jsAppSources = [
-  'components/**/*.js'
-];
-var jsVendorSources = [
-  'bower_components/**/*.js'
-];
-var jsDestination = 'dist/scripts';
+var jsAppSources = CONFIG.src.app.scripts;
+var jsVendorSources = CONFIG.src.vendor.scripts;
+var jsDestination = CONFIG.dest.app.scripts;
 
-var cssAppSources = [
-  'components/project/'
-];
-var cssVendorSources = [
-  'bower_components/**/*.min.css',
-];
-var cssDestination = 'dist/styles';
+var cssAppSources = CONFIG.src.app.styles;
+var cssVendorSources = CONFIG.src.vendor.styles;
+var cssDestination = CONFIG.dest.app.styles;
 
-var htmlAppSources = [
-  'components/**/*.html'
-];
-var htmlDestination = 'dist/html';
+var htmlAppSources = CONFIG.src.app.templates;
+var htmlDestination = CONFIG.dest.app.templates;
 
 /**
  * [END] - Find all the files =======================================
