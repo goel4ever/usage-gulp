@@ -125,21 +125,21 @@ gulp.task('util:copy', function() {
   gulp.src(jsAppSources)
     .pipe(copy()
       .on('error', gutil.log))
-    .pipe(gulp.dest(jsAppDestination));
+    .pipe(gulp.dest(jsDestination));
 });
 // Add header to each file generated
 gulp.task('util:add:header', function() {
-  gulp.src(jsAppDestination + '/**/*.js')
+  gulp.src(jsDestination + '/**/*.js')
     .pipe(add_header("/* This file is auto-generated — do not edit by hand! */\n"))
-    .pipe(gulp.dest(jsAppDestination));
+    .pipe(gulp.dest(jsDestination));
 
-  gulp.src(cssAppDestination + '/**/*.css')
+  gulp.src(cssDestination + '/**/*.css')
     .pipe(add_header("/* This file is auto-generated — do not edit by hand! */\n"))
-    .pipe(gulp.dest(cssAppDestination));
+    .pipe(gulp.dest(cssDestination));
 
-  gulp.src(htmlAppDestination + '/**/*.html')
+  gulp.src(htmlDestination + '/**/*.html')
     .pipe(add_header("<!-- This file is auto-generated — do not edit by hand! -->\n"))
-    .pipe(gulp.dest(htmlAppDestination));
+    .pipe(gulp.dest(htmlDestination));
 });
 /**
  * [END] - Define executable tasks ==================================
@@ -165,7 +165,7 @@ gulp.task('uglify:js', function() {
   return gulp.src(jsAppSources)
     .pipe(uglify()
       .on('error', gutil.log))
-    .pipe(gulp.dest(jsAppDestination));
+    .pipe(gulp.dest(jsDestination));
 });
 
 /**
@@ -175,7 +175,7 @@ gulp.task('concat:js', function() {
   return gulp.src(jsAppSources)
     .pipe(concat('script.js')
       .on('error', gutil.log))
-    .pipe(gulp.dest(jsAppDestination));
+    .pipe(gulp.dest(jsDestination));
 });
 
 /**
@@ -185,7 +185,7 @@ gulp.task('sass', function() {
   gulp.src(cssAppSources)
     .pipe(compass()
       .on('error', gutil.log))
-    .pipe(gulp.dest(cssAppDestination));
+    .pipe(gulp.dest(cssDestination));
 });
 
 
@@ -193,31 +193,19 @@ gulp.task('sass', function() {
 /**
  * [START] - Find all the files =====================================
  */
-var allSources = 'src';
-var allDestination = 'dist';
+var allSources = CONFIG.src.path;
+var allDestination = CONFIG.dest.path;
 
-var jsAppSources = [
-  'src/**/*.js'
-];
-var jsAppDestination = 'dist/development/js';
-var cssAppSources = [
-  //'src/**/*.scss',
-  'src/sass/main.scss'
-];
-var cssAppDestination = 'dist/development/css';
-var htmlAppSources = [
-  'src/**/*.html'
-];
-var htmlAppDestination = 'dist/development/html';
+var jsAppSources = CONFIG.src.app.scripts;
+var jsVendorSources = CONFIG.src.vendor.scripts;
+var jsDestination = CONFIG.dest.app.scripts;
 
-var jsVendorSources = [
-  'bower_components/**/*.js'
-];
-var jsVendorDestination = 'dist/development/js';
-var cssVendorSources = [
-  'bower_components/**/*.scss'
-];
-var cssVendorDestination = 'dist/development/css';
+var cssAppSources = CONFIG.src.app.styles;
+var cssVendorSources = CONFIG.src.vendor.styles;
+var cssDestination = CONFIG.dest.app.styles;
+
+var htmlAppSources = CONFIG.src.app.templates;
+var htmlDestination = CONFIG.dest.app.templates;
 /**
  * [END] - Find all the files =======================================
  */
