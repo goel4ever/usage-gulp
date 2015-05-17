@@ -6,17 +6,17 @@
 
 module.exports = {
   src: {
-    path: './components',
+    path: './src',
     app: {
       scripts: [
-        'components/**/*.js'
+        'src/**/*.js'
       ],
       styles: [
-        'components/project/**/*.less',
-        'components/project/**/*.css'
+        'src/**/*.less',
+        'src/**/*.css'
       ],
       templates: [
-        'components/**/*.html'
+        'src/**/*.html'
       ]
     },
     vendor: {

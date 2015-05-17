@@ -79,12 +79,12 @@ var gulp = require('gulp'),
 
 /**
  * Task [util:clean] - Meant to delete files and folders in a given path
- * 'dist/development/js/project/scripts/*'
- * 'dist/development/js/project/scripts/**'
- * 'dist/development/js/project/scripts/** /*'
- * 'dist/development/js/project/** /*'
- * 'dist/development/js/project/scripts'
- * 'dist/development/js/project/scripts'
+ * 'dist/development/js/scripts/*'
+ * 'dist/development/js/scripts/**'
+ * 'dist/development/js/scripts/** /*'
+ * 'dist/development/js/** /*'
+ * 'dist/development/js/scripts'
+ * 'dist/development/js/scripts'
  */
 gulp.task('util:clean', function() {
   gulp.src(allDestination)
@@ -193,20 +193,20 @@ gulp.task('sass', function() {
 /**
  * [START] - Find all the files =====================================
  */
-var allSources = 'components';
+var allSources = 'src';
 var allDestination = 'dist';
 
 var jsAppSources = [
-  'components/**/*.js'
+  'src/**/*.js'
 ];
 var jsAppDestination = 'dist/development/js';
 var cssAppSources = [
-  //'components/**/*.scss',
-  'components/project/sass/main.scss'
+  //'src/**/*.scss',
+  'src/sass/main.scss'
 ];
 var cssAppDestination = 'dist/development/css';
 var htmlAppSources = [
-  'components/**/*.html'
+  'src/**/*.html'
 ];
 var htmlAppDestination = 'dist/development/html';
 
@@ -244,7 +244,7 @@ gulp.task('build:html', function() {
 });
 gulp.task('server', ['util:clean:dist', 'util:clean:tmp']);
 gulp.task('watch', function() {
-  gulp.watch("components/**/*.js", ['lint:js']);
+  gulp.watch("src/**/*.js", ['lint:js']);
 });
 /**
  * [END] - Tasks built to handle individual components ===========================
