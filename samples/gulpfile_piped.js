@@ -10,16 +10,17 @@
  * ===================================================
  *
  * Start by:
- * a. Clean existing distribution folder
- * b. Preen bower packages based on need and configuration in bower json
- * c. Find all files in bower components and create one each js/css by concatenating only (call it vendor.js and vendor.css)
- * d. Find all the files being used from source
- * e. Minify the files
- * f. Concatenate the files into modularized files
- * g. Save the final files
- * h. Replace the references in template
- * i. Add header to generated files
- * j. Copy remaining files to the dist folder, for e.g., images, fonts
+ * A. Clean existing distribution folder
+ * B. Bower install all the components
+ * C. Preen bower packages based on need and configuration in bower json
+ * D. Find all files in bower components and create one each js/css by concatenating only (call it vendor.js and vendor.css)
+ * E. Find all the files being used from source
+ * F. Minify the files
+ * G. Concatenate the files into modularized files
+ * H. Save the final files
+ * I. Replace the references in template
+ * J. Add header to generated files
+ * K. Copy remaining files to the dist folder, for e.g., images, fonts
  *
  * Tasks that a build manager would be required to do:
  * 1. Lint JS
@@ -46,33 +47,28 @@
  *
  */
 
+/*  Load the error handler
+ ---------------------------------------------------------------------------- */
 
+var errorHandler  = require('./libs/errorHandler');
+
+var CONFIG        = require('./config/build.config.js');
 /**
  * [START] - Find all the files =====================================
  */
-var allSources = 'components';
-var allDestination = 'dist';
+var allSources = CONFIG.src.path;
+var allDestination = CONFIG.dest.path;
 
-var jsAppSources = [
-  'components/**/*.js'
-];
-var jsVendorSources = [
-  'bower_components/**/*.js'
-];
-var jsDestination = 'dist/scripts';
+var jsAppSources = CONFIG.src.app.scripts;
+var jsVendorSources = CONFIG.src.vendor.scripts;
+var jsDestination = CONFIG.dest.app.scripts;
 
-var cssAppSources = [
-  'components/project/'
-];
-var cssVendorSources = [
-  'bower_components/**/*.min.css',
-];
-var cssDestination = 'dist/styles';
+var cssAppSources = CONFIG.src.app.styles;
+var cssVendorSources = CONFIG.src.vendor.styles;
+var cssDestination = CONFIG.dest.app.styles;
 
-var htmlAppSources = [
-  'components/**/*.html'
-];
-var htmlDestination = 'dist/html';
+var htmlAppSources = CONFIG.src.app.templates;
+var htmlDestination = CONFIG.dest.app.templates;
 
 /**
  * [END] - Find all the files =======================================
@@ -82,41 +78,51 @@ var htmlDestination = 'dist/html';
 
 // require - Node method that tells that gulp is required by the code
 var gulp        = require('gulp'),
-    runSequence = require('run-sequence'),
-    del         = require('del'),
-    clean       = require('gulp-contrib-clean'),
-    copy        = require('gulp-contrib-copy'),
-    preen       = require('preen'),
-    add_header  = require('gulp-header'),
-    // Add more 'src' files at any point in the pipeline
-    addSrc      = require('gulp-add-src'),
-    // Replace etc with etc
-    replace     = require('gulp-replace'),
+  bower = require('gulp-bower'),
+  runSequence = require('run-sequence'),
+  del         = require('del'),
+  clean       = require('gulp-contrib-clean'),
+  copy        = require('gulp-contrib-copy'),
+  preen       = require('preen'),
+  add_header  = require('gulp-header'),
+// Add more 'src' files at any point in the pipeline
+  addSrc      = require('gulp-add-src'),
+// Replace etc with etc
+  replace     = require('gulp-replace'),
 
-    csslint     = require('gulp-csslint'),
-    less        = require('gulp-less'),
-    compass     = require('gulp-compass'),
-    // Minify CSS files
-    minify_css  = require('gulp-minify-css'),
+  csslint     = require('gulp-csslint'),
+  less        = require('gulp-less'),
+  compass     = require('gulp-compass'),
+  autoprefixer= require('gulp-autoprefixer'),
+// Minify CSS files
+  minify_css  = require('gulp-minify-css'),
 
-    htmlhint    = require('gulp-htmlhint'),
-    minify_html = require('gulp-minify-html'),
+  htmlhint    = require('gulp-htmlhint'),
+  minify_html = require('gulp-minify-html'),
 
-    jshint      = require('gulp-jshint'),
-    jshint_stylish = require('jshint-stylish'),
-    // Concatenate files
-    concat      = require('gulp-concat'),
-    uglify      = require('gulp-uglify'),
-    //
-    usemin      = require('gulp-usemin'),
-    gutil       = require('gulp-util'),
-    watch       = require('gulp-watch');
+  jshint      = require('gulp-jshint'),
+  jshint_stylish = require('jshint-stylish'),
+// Concatenate files
+  concat      = require('gulp-concat'),
+  uglify      = require('gulp-uglify'),
+//
+  usemin      = require('gulp-usemin'),
+  gutil       = require('gulp-util'),
+  watch       = require('gulp-watch'),
+
+  templateCache = require('gulp-angular-templatecache');
 
 
 /**
  * [START] - Define executable tasks ================================
  */
 
+/**
+ * Task [util:install:bower] - Install bower components
+ */
+gulp.task('util:install:bower', function() {
+  return bower();
+});
 /**
  * Task [util:clean] - Meant to delete files and folders in a given path
  * 'dist/development/js/project/scripts/*'
@@ -163,8 +169,8 @@ gulp.task('util:clean:preen', function(cb) {
  */
 gulp.task('util:copy', function() {
   gulp.src(jsAppSources)
-    .pipe(copy()
-      .on('error', gutil.log))
+    .pipe(copy())
+    .on('error', errorHandler)
     .pipe(gulp.dest(jsDestination));
 });
 // Add header to each file generated
@@ -193,18 +199,17 @@ gulp.task('util:add:header', function() {
  */
 gulp.task('build:js', function() {
   gulp.src(jsAppSources)
-    .pipe(jshint()
-      .on('error', gutil.log))
+    .pipe(jshint())
     .pipe(jshint.reporter("default"))
-    .pipe(uglify()
-      .on('error', gutil.log))
-    .pipe(concat('script.min.js')
-      .on('error', gutil.log))
+    .pipe(uglify())
+    .on('error', errorHandler)
+    .pipe(concat('script.min.js'))
+    .on('error', errorHandler)
     .pipe(gulp.dest(jsDestination));
 
   gulp.src(jsVendorSources)
-    .pipe(concat('vendor.min.js')
-      .on('error', gutil.log))
+    .pipe(concat('vendor.min.js'))
+    .on('error', errorHandler)
     .pipe(gulp.dest(jsDestination));
 });
 
@@ -215,26 +220,28 @@ gulp.task('build:css', function() {
   ])
     .pipe(csslint())
     .pipe(csslint.reporter())
-    .pipe(less()
-      .on('error', gutil.log))
-    .pipe(concat('main.min.css')
-      .on('error', gutil.log))
-    .pipe(minify_css()
-      .on('error', gutil.log))
+    .pipe(less())
+    .on('error', errorHandler)
+    .pipe(concat('main.min.css'))
+    .on('error', errorHandler)
+    .pipe(autoprefixer())
+    .on('error', errorHandler)
+    .pipe(minify_css())
+    .on('error', errorHandler)
     .pipe(gulp.dest(cssDestination));
 
   gulp.src(cssVendorSources)
-    .pipe(concat('vendor.min.css')
-      .on('error', gutil.log))
+    .pipe(concat('vendor.min.css'))
+    .on('error', errorHandler)
     .pipe(gulp.dest(cssDestination));
 });
 
 gulp.task('build:html', function() {
   gulp.src(htmlAppSources)
-    .pipe(htmlhint()
-      .on('error', gutil.log))
-    .pipe(minify_html({empty: true})
-      .on('error', gutil.log))
+    .pipe(htmlhint())
+    .pipe(templateCache())
+    .pipe(minify_html({empty: true, collapseWhitespace: true, collapseBooleanAttributes: true }))
+    .on('error', errorHandler)
     .pipe(gulp.dest(htmlDestination));
 });
 
@@ -253,7 +260,8 @@ gulp.task('watch', function() {
  */
 gulp.task('serve:build', function(cb) {
   runSequence(
-    ['util:clean:dist', 'util:clean:preen'],
+    ['util:clean:dist', 'util:install:bower'],
+    'util:clean:preen',
     ['build:js', 'build:css', 'build:html'],
     'util:add:header',
     //'server',
@@ -263,7 +271,8 @@ gulp.task('serve:build', function(cb) {
 });
 gulp.task('serve:debug', function(cb) {
   runSequence(
-    ['util:clean:dist', 'util:clean:preen'],
+    ['util:clean:dist', 'util:install:bower'],
+    'util:clean:preen',
     ['build:js', 'build:css', 'build:html'],
     'util:add:header',
     //'server',
@@ -273,7 +282,8 @@ gulp.task('serve:debug', function(cb) {
 });
 gulp.task('serve:release', function(cb) {
   runSequence(
-    ['util:clean:dist', 'util:clean:preen'],
+    ['util:clean:dist', 'util:install:bower'],
+    'util:clean:preen',
     ['build:js', 'build:css', 'build:html'],
     'util:add:header',
     //'server',
