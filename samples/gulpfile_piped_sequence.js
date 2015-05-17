@@ -214,10 +214,7 @@ gulp.task('build:js', function() {
 });
 
 gulp.task('build:css', function() {
-  gulp.src([
-    cssAppSources + '**/*.less',
-    cssAppSources + '**/*.css'
-  ])
+  gulp.src(cssAppSources)
     .pipe(csslint())
     .pipe(csslint.reporter())
     .pipe(less())

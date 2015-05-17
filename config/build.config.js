@@ -12,7 +12,8 @@ module.exports = {
         'components/**/*.js'
       ],
       styles: [
-        'components/project/'
+        'components/project/**/*.less',
+        'components/project/**/*.css'
       ],
       templates: [
         'components/**/*.html'
