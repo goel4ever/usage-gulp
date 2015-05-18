@@ -3,18 +3,21 @@
 /*  Load gulp + plugins
 /* ------------------------------------------------------------------------- */
 
-var notify  = require("gulp-notify");
+var gutil = require('gulp-util');
 
 /*  Notify on build error
  *  Keep gulp from hanging on this task
+ *  Go 'beep' on build error :)
 /* ------------------------------------------------------------------------- */
 
-module.exports  = function (errorObject, callback) {
+module.exports  = function(error) {
 
-  notify.onError(errorObject.toString().split(': ').join(':\n')).apply(this, arguments);
+  var header;
 
-  if (typeof this.emit === 'function') {
-    this.emit('end');
-  }
+  header  = '\n[' + gutil.colors.red(' --- Error in ' + error.plugin + ' --- ') + ']\n';
+
+  gutil.log(header, error.message, this.emit('end'));
+
+  return gutil.beep();
 
 };
